@@ -8,21 +8,22 @@ import (
 	"testing"
 )
 
-func Equal(t *testing.T, a interface{}, b interface{}, message string) {
+func Equal(t *testing.T, a interface{}, b interface{}, messages ...string) {
 	if a == b {
 		return
 	}
-	if len(message) == 0 {
-		message = fmt.Sprintf("\n%v !=\n%v", a, b)
+	message := fmt.Sprintf("\n%v !=\n%v", a, b)
+	if len(messages) > 0 {
+		message = messages[0]
 	}
 	t.Fatal(message)
 }
 
-func NotEqual(t *testing.T, a interface{}, b interface{}, message string) {
+func NotEqual(t *testing.T, a interface{}, b interface{}, messages ...string) {
 	if a != b {
 		return
 	}
-	Equal(t, a, b, message)
+	Equal(t, a, b, messages...)
 }
 
 func DeepEqual(t *testing.T, exp, act interface{}) {
@@ -34,22 +35,24 @@ func DeepEqual(t *testing.T, exp, act interface{}) {
 	}
 }
 
-func Nil(t *testing.T, a interface{}, message string) {
+func Nil(t *testing.T, a interface{}, messages ...string) {
 	if isNil(a) {
 		return
 	}
-	if len(message) == 0 {
-		message = fmt.Sprintf("Expected nil, but got: %#v", a)
+	message := fmt.Sprintf("Expected nil, but got: %#v", a)
+	if len(messages) > 0 {
+		message = messages[0]
 	}
 	t.Fatal(message)
 }
 
-func NotNil(t *testing.T, a interface{}, message string) {
+func NotNil(t *testing.T, a interface{}, messages ...string) {
 	if !isNil(a) {
 		return
 	}
-	if len(message) == 0 {
-		message = fmt.Sprintf("Expected not nil, but got: %#v", a)
+	message := fmt.Sprintf("Expected not nil, but got: %#v", a)
+	if len(messages) > 0 {
+		message = messages[0]
 	}
 	t.Fatal(message)
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 
 	"gometrics"
 	"gometrics/lib/util"
@@ -11,10 +12,12 @@ import (
 func main() {
 	// pid := os.Getpid()
 	var pid int
-	flag.IntVar(&pid, "pid", 1234, "PID")
+	flag.IntVar(&pid, "pid", 1, "PID")
 	flag.Parse()
 	collector := gometrics.NewCollector()
-	pidInfo := collector.GetSysInfoBy(pid)
-
-	fmt.Println(util.PrettyJSON(pidInfo))
+	info, err := collector.GetInfoByPid(pid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(util.PrettyJSON(info))
 }
