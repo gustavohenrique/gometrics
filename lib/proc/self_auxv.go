@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	DEFAULT_CLOCK_TICK = 100  // Linux x86
-	uintSize uint = 32 << (^uint(0) >> 63)
+	DEFAULT_CLOCK_TICK      = 100 // Linux x86
+	uintSize           uint = 32 << (^uint(0) >> 63)
 )
 
 /*

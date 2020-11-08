@@ -56,3 +56,9 @@ type PidStat struct {
 	CpuTotalTimeSpent  uint
 	CpuUsagePercentage float64
 }
+
+type DockerStat struct {
+	MemoryUsage        uint64  `json:"memory_usage_mib"`
+	MemoryLimit        uint64  `json:"memory_limit_mib"`
+	CpuUsagePercentage float64 `json:"cpu_usage_percentage"`
+}

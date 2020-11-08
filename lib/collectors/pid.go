@@ -45,7 +45,9 @@ func (p *PidCollector) GetPidStatByInterval(pid, seconds int) (domain.PidStat, e
 		return stat, err
 	}
 
-	time.Sleep(time.Second * time.Duration(seconds))
+	// time.Sleep(time.Second * time.Duration(seconds))
+	interval := time.Duration(seconds) * time.Second
+	<-time.After(interval)
 
 	data, _ = util.ReadFileNoStat(filename)
 	pidStatSample2, err := proc.ParsePidStat(data)

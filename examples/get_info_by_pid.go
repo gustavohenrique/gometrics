@@ -14,7 +14,7 @@ func main() {
 	var pid int
 	flag.IntVar(&pid, "pid", 1, "PID")
 	flag.Parse()
-	collector := gometrics.NewCollector()
+	collector := gometrics.New()
 	info, err := collector.GetInfoByPid(pid)
 	if err != nil {
 		log.Fatal(err)

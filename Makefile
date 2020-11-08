@@ -8,7 +8,7 @@ tests:
 
 lint: linter
 linter:
-	goimports -w src libs
+	goimports -w lib
 
 install: setup
 setup:
