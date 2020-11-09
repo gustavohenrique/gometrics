@@ -29,7 +29,7 @@ func (c *PidCollector) GetStat(pid, seconds int) (domain.PidStat, error) {
 	if err != nil {
 		return stat, err
 	}
-	usage, err := c.GetProportionalMemoryUsage(pid)
+	usage, err := c.GetMemoryUsageProportional(pid)
 	if err != nil {
 		return stat, err
 	}
@@ -37,7 +37,7 @@ func (c *PidCollector) GetStat(pid, seconds int) (domain.PidStat, error) {
 	return stat, nil
 }
 
-func (c *PidCollector) GetProportionalMemoryUsage(pid int) (uint64, error) {
+func (c *PidCollector) GetMemoryUsageProportional(pid int) (uint64, error) {
 	filename := fmt.Sprintf("%s/%d/%s", c.Proc, pid, c.Smaps)
 	data, err := util.ReadFileNoStat(filename)
 	if err != nil {
