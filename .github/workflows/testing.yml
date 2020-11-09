@@ -1,0 +1,23 @@
+name: testing
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+    
+      - name: Install GO
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15' 
+
+      - name: Run tests
+        env:
+          TZ: America/Sao_Paulo
+          GOPROXY: off
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          go test -v -failfast -covermode atomic -coverprofile=profile.cov ./lib/...
+          GO111MODULE=off go get github.com/mattn/goveralls
+          ~/go/bin/goveralls -coverprofile=profile.cov
