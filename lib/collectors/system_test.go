@@ -18,9 +18,9 @@ func TestSystemCollector(ts *testing.T) {
 		assert.Equal(t, uptime, 534235.93)
 	})
 
-	test.It(ts, "GetMemoryInfo", func(t *testing.T) {
-		info, err := collector.GetMemoryInfo()
+	test.It(ts, "GetMemoryStat", func(t *testing.T) {
+		stat, err := collector.GetMemoryStat()
 		assert.Nil(t, err)
-		assert.Equal(t, info.MemTotal, uint64(32767112))
+		assert.Equal(t, stat.MemTotal, uint64(32767112))
 	})
 }

@@ -54,7 +54,7 @@ func ParseStat(data []byte) (domain.Stat, error) {
 				return stat, fmt.Errorf("couldn't parse %s (procs_blocked): %s", parts[1], err)
 			}
 		case strings.HasPrefix(parts[0], "cpu"):
-			cpuStat, cpuID, err := parseCPUStat(line)
+			cpuStat, cpuID, err := parseCpuStat(line)
 			if err != nil {
 				return stat, err
 			}
@@ -62,7 +62,7 @@ func ParseStat(data []byte) (domain.Stat, error) {
 				stat.CPU = cpuStat
 			} else {
 				for int64(len(stat.CPUs)) <= cpuID {
-					stat.CPUs = append(stat.CPUs, domain.CPUStat{})
+					stat.CPUs = append(stat.CPUs, domain.CpuStat{})
 				}
 				stat.CPUs[cpuID] = cpuStat
 			}
@@ -77,8 +77,8 @@ func ParseStat(data []byte) (domain.Stat, error) {
 	return stat, nil
 }
 
-func parseCPUStat(line string) (domain.CPUStat, int64, error) {
-	cpuStat := domain.CPUStat{}
+func parseCpuStat(line string) (domain.CpuStat, int64, error) {
+	cpuStat := domain.CpuStat{}
 	var cpu string
 
 	count, err := fmt.Sscanf(line, "%s %f %f %f %f %f %f %f %f %f %f",

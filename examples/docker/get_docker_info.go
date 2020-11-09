@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 	"runtime"
 	"time"
 
@@ -12,12 +11,11 @@ import (
 )
 
 func main() {
-	fmt.Println("PID=", os.Getpid())
 	collector := gometrics.New()
 	interval := 1 * time.Second
 	go func() {
 		for {
-			info, _ := collector.GetInfoFromCurrentProc()
+			info, _ := collector.GetDockerInfo()
 			fmt.Println(util.PrettyJSON(info))
 			<-time.After(interval)
 			runtime.GC()

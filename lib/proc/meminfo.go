@@ -10,8 +10,8 @@ import (
 	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
-func ParseMemoryInfo(data []byte) (domain.MemoryInfo, error) {
-	var m domain.MemoryInfo
+func ParseMemoryStat(data []byte) (domain.MemoryStat, error) {
+	var m domain.MemoryStat
 	scanner := bufio.NewScanner(bytes.NewReader(data))
 	for scanner.Scan() {
 		fields := strings.Fields(scanner.Text())

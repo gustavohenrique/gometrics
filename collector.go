@@ -2,87 +2,81 @@ package gometrics
 
 import (
 	"os"
-	"runtime"
-	"syscall"
 
 	"github.com/gustavohenrique/gometrics/lib/collectors"
 	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
 var (
-	seconds = 1
-	dockerCollector = collectors.NewDockerCollector()
-	pidCollector = collectors.NewPidCollector()
+	dockerCollector  = collectors.NewDockerCollector()
+	pidCollector     = collectors.NewPidCollector()
+	systemCollector  = collectors.NewSystemCollector()
+	runtimeCollector = collectors.NewRuntimeCollector()
 )
 
-type Collector struct{}
-
-func New() *Collector {
-	return &Collector{}
+type Collector struct {
+	DurationBetweenCPUSamples int
 }
 
-func (c *Collector) GetInfoFromCurrentDockerContainer() (domain.DockerInfo, error) {
-	info := domain.DockerInfo{}
-	dockerStat, err := dockerCollector.GetDockerStatByInterval(seconds)
+func New() *Collector {
+	return &Collector{
+		DurationBetweenCPUSamples: 1,
+	}
+}
+
+func (c *Collector) GetDockerInfo() (domain.DockerInfo, error) {
+	var info domain.DockerInfo
+	dockerStat, err := dockerCollector.GetStat(c.DurationBetweenCPUSamples)
 	if err != nil {
 		return info, err
 	}
-	info.MemoryUsage = dockerStat.MemoryUsage
-	info.MemoryLimit = dockerStat.MemoryLimit
+	info.MemoryUsage = dockerStat.MemoryUsage / (1024 * 1024)
+	info.MemoryLimit = dockerStat.MemoryLimit / (1024 * 1024)
 	info.CpuUsagePercentage = dockerStat.CpuUsagePercentage
+
+	runtimeStat, err := runtimeCollector.GetStat()
+	if err != nil {
+		return info, err
+	}
+	info.RuntimeStat = &runtimeStat
+
 	return info, nil
 }
 
-func (c *Collector) GetInfoFromCurrentProc() (domain.GoInfo, error) {
-	var ru syscall.Rusage
-	syscall.Getrusage(syscall.RUSAGE_SELF, &ru)
-	maxRss := ru.Maxrss
+func (c *Collector) GetRuntimeInfo() (domain.ProcessInfo, error) {
+	info, err := c.GetProcessInfoByPID(os.Getpid())
+	if err != nil {
+		return info, err
+	}
 
-	var rtm runtime.MemStats
-	runtime.ReadMemStats(&rtm)
+	runtimeStat, err := runtimeCollector.GetStat()
+	if err != nil {
+		return info, err
+	}
+	info.RuntimeStat = &runtimeStat
 
-	pid := os.Getpid()
-	pidInfo, err := c.GetInfoByPid(pid)
-	info := domain.GoInfo{}
-	info.PidInfo = pidInfo
-	info.NumGoroutine = runtime.NumGoroutine()
-
-	// https://golang.org/pkg/runtime/
-	info.MemoryMaxRss = maxRss
-	info.Alloc = rtm.Alloc
-	info.TotalAlloc = rtm.TotalAlloc
-	info.Sys = rtm.Sys
-	info.Mallocs = rtm.Mallocs
-	info.Frees = rtm.Frees
-	info.LiveObjects = info.Mallocs - info.Frees
-	info.PauseTotalNs = rtm.PauseTotalNs
-	info.NumGC = rtm.NumGC
-	return info, err
+	return info, nil
 }
 
-func (c *Collector) GetInfoByPid(pid int) (domain.PidInfo, error) {
-	info := domain.PidInfo{}
-	pidStat, err := pidCollector.GetPidStatByInterval(pid, seconds)
+func (c *Collector) GetProcessInfoByPID(pid int) (domain.ProcessInfo, error) {
+	var info domain.ProcessInfo
+	info.PID = pid
+
+	pidStat, err := pidCollector.GetStat(pid, c.DurationBetweenCPUSamples)
 	if err != nil {
 		return info, err
 	}
-	info.PID = pidStat.PID
+	info.PidStat = &pidStat
+
+	systemStat, err := systemCollector.GetStat()
+	if err != nil {
+		return info, err
+	}
+	info.SystemStat = &systemStat
+
+	info.MemoryUsage = pidStat.MemoryUsage / 1024
+	info.MemoryTotal = systemStat.MemTotal / 1024
 	info.CpuUsagePercentage = pidStat.CpuUsagePercentage
-	info.NumThreads = pidStat.NumThreads
-	info.State = pidStat.StateName
-
-	memory, err := pidCollector.GetProportionalMemoryUsage(pid)
-	if err != nil {
-		return info, err
-	}
-	info.MemoryUsage = memory / 1024
-
-	systemCollector := collectors.NewSystemCollector()
-	info.NumCPU = systemCollector.GetNumCPU()
-	meminfo, err := systemCollector.GetMemoryInfo()
-	if err == nil {
-		info.MemoryTotal = meminfo.MemTotal / 1024
-	}
 
 	return info, nil
 }

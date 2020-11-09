@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // ReadFileNoStat uses ioutil.ReadAll to read contents of entire file.
@@ -25,10 +26,19 @@ func ReadFileNoStat(filename string) ([]byte, error) {
 	return ioutil.ReadAll(reader)
 }
 
-func ParseFloat(val string) float64 {
-	floatVal, err := strconv.ParseFloat(val, 64)
+func ParseFloat(s string) float64 {
+	val, err := strconv.ParseFloat(s, 64)
 	if err != nil {
 		return 0
 	}
-	return floatVal
+	return val
+}
+
+func ParseUint64(s string) uint64 {
+	s = strings.TrimSuffix(s, "\n")
+	val, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return 0
+	}
+	return val
 }

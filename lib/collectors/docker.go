@@ -2,7 +2,6 @@ package collectors
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/gustavohenrique/gometrics/lib/domain"
@@ -10,7 +9,7 @@ import (
 )
 
 type DockerCollector struct {
-	Proc        string
+	Cgroup      string
 	MemoryUsage string
 	MemoryLimit string
 	CpuUsage    string
@@ -18,50 +17,48 @@ type DockerCollector struct {
 
 func NewDockerCollector() *DockerCollector {
 	return &DockerCollector{
-		Proc:        "/sys/fs/cgroup",
+		Cgroup:      "/sys/fs/cgroup",
 		MemoryUsage: "memory/memory.usage_in_bytes",
 		MemoryLimit: "memory/memory.limit_in_bytes",
 		CpuUsage:    "cpuacct/cpuacct.usage",
 	}
 }
 
-func (p *DockerCollector) GetDockerStatByInterval(seconds int) (domain.DockerStat, error) {
+func (c *DockerCollector) GetStat(seconds int) (domain.DockerStat, error) {
 	var stat domain.DockerStat
-	filename := fmt.Sprintf("%s/%s", p.Proc, p.MemoryUsage)
+	filename := fmt.Sprintf("%s/%s", c.Cgroup, c.MemoryUsage)
 	data, err := util.ReadFileNoStat(filename)
 	if err != nil {
 		return stat, err
 	}
-	memoryUsageInBytes, _ := strconv.ParseUint(string(data), 10, 64)
-	stat.MemoryUsage = memoryUsageInBytes / (1024 * 1024)
+	stat.MemoryUsage = util.ParseUint64(string(data))
 
-	filename = fmt.Sprintf("%s/%s", p.Proc, p.MemoryLimit)
+	filename = fmt.Sprintf("%s/%s", c.Cgroup, c.MemoryLimit)
 	data, err = util.ReadFileNoStat(filename)
 	if err != nil {
 		return stat, err
 	}
-	memoryLimitInBytes, _ := strconv.ParseUint(string(data), 10, 64)
-	stat.MemoryLimit = memoryLimitInBytes / (1024 * 1024)
+	stat.MemoryLimit = util.ParseUint64(string(data))
 
-	filename = fmt.Sprintf("%s/%s", p.Proc, p.CpuUsage)
+	filename = fmt.Sprintf("%s/%s", c.Cgroup, c.CpuUsage)
 	data, err = util.ReadFileNoStat(filename)
 	if err != nil {
 		return stat, err
 	}
-	cpuSample1, _ := strconv.ParseUint(string(data), 10, 64)
+	cpuSample1 := util.ParseUint64(string(data))
 
 	interval := time.Duration(seconds) * time.Second
 	<-time.After(interval)
 
 	data, _ = util.ReadFileNoStat(filename)
-	cpuSample2, _ := strconv.ParseUint(string(data), 10, 64)
+	cpuSample2 := util.ParseUint64(string(data))
 
-	usage := p.CalculateCpuUsagePercentage(cpuSample1, cpuSample2, seconds)
+	usage := c.calculateCpuUsagePercentage(cpuSample1, cpuSample2, seconds)
 	stat.CpuUsagePercentage = usage
 	return stat, nil
 }
 
-func (p *DockerCollector) CalculateCpuUsagePercentage(past, now uint64, seconds int) float64 {
+func (c *DockerCollector) calculateCpuUsagePercentage(past, now uint64, seconds int) float64 {
 	totalTime := now - past
 	usage := (float64(totalTime) / float64(seconds))
 	return util.ParseFloat(fmt.Sprintf("%.2f", usage))

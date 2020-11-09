@@ -62,9 +62,9 @@ DirectMap2M:    29616128 kB
 DirectMap1G:     3145728 kB`
 
 	test.It(ts, "Should parse stats", func(t *testing.T) {
-		info, err := proc.ParseMemoryInfo([]byte(fake))
+		stat, err := proc.ParseMemoryStat([]byte(fake))
 		assert.Nil(t, err, "")
-		assert.Equal(t, info.MemTotal, uint64(32767112))
-		assert.Equal(t, info.Hugepagesize, uint64(2048))
+		assert.Equal(t, stat.MemTotal, uint64(32767112))
+		assert.Equal(t, stat.Hugepagesize, uint64(2048))
 	})
 }
