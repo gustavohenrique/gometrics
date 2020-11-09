@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
 const (

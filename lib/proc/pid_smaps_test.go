@@ -3,10 +3,10 @@ package proc_test
 import (
 	"testing"
 
-	"gometrics/lib/proc"
-	"gometrics/test"
-	"gometrics/test/assert"
-	"gometrics/test/fs"
+	"github.com/gustavohenrique/gometrics/lib/proc"
+	"github.com/gustavohenrique/gometrics/test"
+	"github.com/gustavohenrique/gometrics/test/assert"
+	"github.com/gustavohenrique/gometrics/test/fs"
 )
 
 func TestParseSmaps(ts *testing.T) {

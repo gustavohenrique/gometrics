@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
 func ParseMemoryInfo(data []byte) (domain.MemoryInfo, error) {

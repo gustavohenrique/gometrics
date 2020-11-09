@@ -3,10 +3,10 @@ package collectors_test
 import (
 	"testing"
 
-	"gometrics/lib/collectors"
-	"gometrics/test"
-	"gometrics/test/assert"
-	"gometrics/test/fs"
+	"github.com/gustavohenrique/gometrics/lib/collectors"
+	"github.com/gustavohenrique/gometrics/test"
+	"github.com/gustavohenrique/gometrics/test/assert"
+	"github.com/gustavohenrique/gometrics/test/fs"
 )
 
 func TestSystemCollector(ts *testing.T) {

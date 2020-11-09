@@ -5,8 +5,8 @@ import (
 	"runtime"
 	"syscall"
 
-	"gometrics/lib/collectors"
-	"gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/collectors"
+	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
 var (

@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"time"
 
-	"gometrics"
-	"gometrics/lib/util"
+	"github.com/gustavohenrique/gometrics"
+	"github.com/gustavohenrique/gometrics/lib/util"
 )
 
 func main() {

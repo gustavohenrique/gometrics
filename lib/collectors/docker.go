@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"gometrics/lib/domain"
-	"gometrics/lib/util"
+	"github.com/gustavohenrique/gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/util"
 )
 
 type DockerCollector struct {

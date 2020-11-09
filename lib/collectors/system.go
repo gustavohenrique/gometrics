@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"strings"
 
-	"gometrics/lib/domain"
-	"gometrics/lib/proc"
-	"gometrics/lib/util"
+	"github.com/gustavohenrique/gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/proc"
+	"github.com/gustavohenrique/gometrics/lib/util"
 )
 
 type SystemCollector struct {

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"gometrics/lib/domain"
+	"github.com/gustavohenrique/gometrics/lib/domain"
 )
 
 func ParseStat(data []byte) (domain.Stat, error) {

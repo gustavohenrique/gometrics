@@ -3,9 +3,9 @@ package proc_test
 import (
 	"testing"
 
-	"gometrics/lib/proc"
-	"gometrics/test"
-	"gometrics/test/assert"
+	"github.com/gustavohenrique/gometrics/lib/proc"
+	"github.com/gustavohenrique/gometrics/test"
+	"github.com/gustavohenrique/gometrics/test/assert"
 )
 
 func TestParseStat(ts *testing.T) {
