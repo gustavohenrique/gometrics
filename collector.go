@@ -32,7 +32,7 @@ func (c *Collector) GetDockerInfo() (domain.DockerInfo, error) {
 	}
 	info.MemoryUsage = dockerStat.MemoryUsage / (1024 * 1024)
 	info.MemoryLimit = dockerStat.MemoryLimit / (1024 * 1024)
-	info.CpuUsagePercentage = dockerStat.CpuUsagePercentage
+	info.CpuUsagePercentage = dockerStat.CpuUsagePercentage / (1024 * 1024)
 
 	runtimeStat, err := runtimeCollector.GetStat()
 	if err != nil {
