@@ -3,21 +3,29 @@ gometrics
 
 [![Coverage Status](https://coveralls.io/repos/github/gustavohenrique/gometrics/badge.svg?branch=main)](https://coveralls.io/github/gustavohenrique/gometrics?branch=main)
 
-Gometrics is a pure Go lib with no third-party dependencies to read CPU and memory info from Linux Kernel via procfs.  
-It calculates the CPU and memory usage and exposes metrics from Go runtime.
+> Gometrics is a pure Go lib with no third-party dependencies to read data from the Linux Kernel via *procfs* and Go runtime.
+
+## Why?
+
+Metrics are a standard for measurement. They play an important role in understanding why your application is working in a certain way. You will need some information to find out what is happening with your application to keep it stable or help you when something goes wrong.
 
 ## Features
 
 - Calculates CPU and memory usage from the current process
 - Exposes Go runtime metrics like total times GC run
-- Gets memory usage and memory limit when it's run inside a Docker container
+- Gets memory usage and limit when it's run inside a Docker container
 - Uses only the Go standard lib
 - Works only on Linux x86
+
+Supported metrics' types:
+
+- **Counter**: is a metric value which can only increase or reset, e.g., total times the Garbage Collector was run
+- **Gauge**: is a number which can either go up or down, e.g., CPU usage
 
 ## Install
 
 ```sh
-go get github.com/gustavohenrique/gometrics@
+go get github.com/gustavohenrique/gometrics
 ```
 
 ## Usage
@@ -42,7 +50,7 @@ func main() {
 What the `GetRuntimeInfo()` does is reads the proc file system. The proc file system (procfs or `/proc`) exposes internal kernel data structures, which is used to obtain information about the system.  
 The `GetDockerInfo()` reads the profcs inside a Docker container. Because the way to get metrics from a process running inside and outside a container could be a little different.
 
-Also, both functions get metrics from Go runtime.
+Also, both functions exposes metrics from Go runtime.
 
 ## License
 
