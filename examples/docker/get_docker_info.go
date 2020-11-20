@@ -15,8 +15,8 @@ func main() {
 	interval := 1 * time.Second
 	go func() {
 		for {
-			info, _ := collector.GetDockerInfo()
-			fmt.Println(util.PrettyJSON(info))
+			metrics, _ := collector.Docker()
+			fmt.Println(util.PrettyJSON(metrics))
 			<-time.After(interval)
 			runtime.GC()
 		}

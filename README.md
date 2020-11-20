@@ -39,16 +39,16 @@ import (
 
 func main() {
     collector := gometrics.New()
-    info, _ := collector.GetRuntimeInfo() // or collector.GetDockerInfo()
-    bytes, _ := json.Marshal(info)
+    metrics, _ := collector.Metrics()  // collector.Process() or collector.Docker()
+    bytes, _ := json.Marshal(metrics)
     fmt.Println(string(bytes))
 }
 ```
 
 ## How it works?
 
-What the `GetRuntimeInfo()` does is reads the proc file system. The proc file system (procfs or `/proc`) exposes internal kernel data structures, which is used to obtain information about the system.  
-The `GetDockerInfo()` reads the profcs inside a Docker container. Because the way to get metrics from a process running inside and outside a container could be a little different.
+What the `Process()` does is reads the proc file system. The proc file system (procfs or `/proc`) exposes internal kernel data structures, which is used to obtain information about the system.  
+The `Docker()` reads the profcs inside a Docker container. Because the way to get metrics from a process running inside and outside a container could be a little different.
 
 Also, both functions exposes metrics from Go runtime.
 

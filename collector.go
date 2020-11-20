@@ -24,59 +24,66 @@ func New() *Collector {
 	}
 }
 
-func (c *Collector) GetDockerInfo() (domain.DockerInfo, error) {
-	var info domain.DockerInfo
+func (c *Collector) Metrics() (domain.Metrics, error) {
+	if c.isInsideDockerContainer() {
+		return c.Docker()
+	}
+	return c.Process()
+}
+
+func (c *Collector) Docker() (domain.Metrics, error) {
+	var metrics domain.Metrics
 	dockerStat, err := dockerCollector.GetStat(c.DurationBetweenCPUSamples)
 	if err != nil {
-		return info, err
+		return metrics, err
 	}
-	info.MemoryUsage = dockerStat.MemoryUsage / (1024 * 1024)
-	info.MemoryLimit = dockerStat.MemoryLimit / (1024 * 1024)
-	info.CpuUsagePercentage = dockerStat.CpuUsagePercentage / (1024 * 1024)
-
-	runtimeStat, err := runtimeCollector.GetStat()
-	if err != nil {
-		return info, err
-	}
-	info.RuntimeStat = &runtimeStat
-
-	return info, nil
+	metrics.MemoryUsage = dockerStat.MemoryUsage / (1024 * 1024)
+	metrics.MemoryTotal = dockerStat.MemoryLimit / (1024 * 1024)
+	metrics.CpuUsagePercentage = dockerStat.CpuUsagePercentage / (1024 * 1024)
+	metrics.RuntimeStat = c.getGoRuntimeStat()
+	return metrics, nil
 }
 
-func (c *Collector) GetRuntimeInfo() (domain.ProcessInfo, error) {
-	info, err := c.GetProcessInfoByPID(os.Getpid())
+func (c *Collector) Process() (domain.Metrics, error) {
+	metrics, err := c.GetProcessMetricsByPID(os.Getpid())
 	if err != nil {
-		return info, err
+		return metrics, err
 	}
-
-	runtimeStat, err := runtimeCollector.GetStat()
-	if err != nil {
-		return info, err
-	}
-	info.RuntimeStat = &runtimeStat
-
-	return info, nil
+	metrics.RuntimeStat = c.getGoRuntimeStat()
+	return metrics, nil
 }
 
-func (c *Collector) GetProcessInfoByPID(pid int) (domain.ProcessInfo, error) {
-	var info domain.ProcessInfo
-	info.PID = pid
+func (c *Collector) GetProcessMetricsByPID(pid int) (domain.Metrics, error) {
+	var metrics domain.Metrics
+	metrics.PID = pid
 
 	pidStat, err := pidCollector.GetStat(pid, c.DurationBetweenCPUSamples)
 	if err != nil {
-		return info, err
+		return metrics, err
 	}
-	info.PidStat = &pidStat
+	metrics.PidStat = &pidStat
 
 	systemStat, err := systemCollector.GetStat()
 	if err != nil {
-		return info, err
+		return metrics, err
 	}
-	info.SystemStat = &systemStat
+	metrics.SystemStat = &systemStat
 
-	info.MemoryUsage = pidStat.MemoryUsage / 1024
-	info.MemoryTotal = systemStat.MemTotal / 1024
-	info.CpuUsagePercentage = pidStat.CpuUsagePercentage
+	metrics.MemoryUsage = pidStat.MemoryUsage / 1024
+	metrics.MemoryTotal = systemStat.MemTotal / 1024
+	metrics.CpuUsagePercentage = pidStat.CpuUsagePercentage
 
-	return info, nil
+	return metrics, nil
+}
+
+func (c *Collector) getGoRuntimeStat() *domain.RuntimeStat {
+	runtimeStat, err := runtimeCollector.GetStat()
+	if err != nil {
+		return nil
+	}
+	return &runtimeStat
+}
+
+func (c *Collector) isInsideDockerContainer() bool {
+	return false
 }

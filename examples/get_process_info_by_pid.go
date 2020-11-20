@@ -22,8 +22,8 @@ func main() {
 	interval := 1 * time.Second
 	go func() {
 		for {
-			info, _ := collector.GetProcessInfoByPID(pid)
-			fmt.Println(util.PrettyJSON(info))
+			metrics, _ := collector.GetProcessMetricsByPID(pid)
+			fmt.Println(util.PrettyJSON(metrics))
 			<-time.After(interval)
 			runtime.GC()
 		}
