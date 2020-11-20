@@ -16,4 +16,5 @@ type Process struct {
 
 type Metrics struct {
 	Process
+	IsDockerContainer bool `json:"is_docker_container"`
 }
