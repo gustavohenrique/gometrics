@@ -14,6 +14,7 @@ type SystemCollector struct {
 	Proc    string
 	Uptime  string
 	Meminfo string
+	Cgroup  string
 }
 
 func NewSystemCollector() *SystemCollector {
@@ -21,6 +22,7 @@ func NewSystemCollector() *SystemCollector {
 		Proc:    "/proc",
 		Uptime:  "uptime",
 		Meminfo: "meminfo",
+		Cgroup:  "1/cgroup",
 	}
 }
 
@@ -56,4 +58,14 @@ func (c *SystemCollector) GetMemoryStat() (domain.MemoryStat, error) {
 		return domain.MemoryStat{}, err
 	}
 	return proc.ParseMemoryStat(data)
+}
+
+func (c *SystemCollector) GetCgroup() string {
+	filename := fmt.Sprintf("%s/%s", c.Proc, c.Cgroup)
+	data, err := util.ReadFileNoStat(filename)
+	if err != nil {
+		return err.Error()
+	}
+	cgroup, _ := proc.ParseCgroup(data)
+	return cgroup
 }

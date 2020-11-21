@@ -1,5 +1,7 @@
 package domain
 
+const LINUX = "init.scope"
+
 type Base struct {
 	MemoryUsage        uint64       `json:"memory_usage_in_mib"`
 	MemoryTotal        uint64       `json:"memory_total_in_mib"`
@@ -16,5 +18,5 @@ type Process struct {
 
 type Metrics struct {
 	Process
-	IsDockerContainer bool `json:"is_docker_container"`
+	Cgroup string `json:"cgroup"`
 }

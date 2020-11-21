@@ -5,7 +5,6 @@ import (
 
 	"github.com/gustavohenrique/gometrics/lib/collectors"
 	"github.com/gustavohenrique/gometrics/lib/domain"
-	"github.com/gustavohenrique/gometrics/lib/util"
 )
 
 var (
@@ -14,10 +13,15 @@ var (
 	systemCollector  = collectors.NewSystemCollector()
 	runtimeCollector = collectors.NewRuntimeCollector()
 	pid              = os.Getpid()
+	cgroup           string
 )
 
 type Collector struct {
 	DurationBetweenCPUSamples int
+}
+
+func init() {
+	cgroup = systemCollector.GetCgroup()
 }
 
 func New() *Collector {
@@ -27,10 +31,10 @@ func New() *Collector {
 }
 
 func (c *Collector) Metrics() (domain.Metrics, error) {
-	if util.IsInsideDockerContainer() {
-		return c.Docker()
+	if cgroup == domain.LINUX {
+		return c.Process()
 	}
-	return c.Process()
+	return c.Docker()
 }
 
 func (c *Collector) Docker() (domain.Metrics, error) {
@@ -40,11 +44,11 @@ func (c *Collector) Docker() (domain.Metrics, error) {
 		return metrics, err
 	}
 	metrics.PID = pid
+	metrics.Cgroup = cgroup
 	metrics.MemoryUsage = dockerStat.MemoryUsage / (1024 * 1024)
 	metrics.MemoryTotal = dockerStat.MemoryLimit / (1024 * 1024)
 	metrics.CpuUsagePercentage = dockerStat.CpuUsagePercentage / (1024 * 1024)
 	metrics.RuntimeStat = c.getGoRuntimeStat()
-	metrics.IsDockerContainer = true
 	return metrics, nil
 }
 
@@ -54,13 +58,13 @@ func (c *Collector) Process() (domain.Metrics, error) {
 		return metrics, err
 	}
 	metrics.RuntimeStat = c.getGoRuntimeStat()
-	metrics.IsDockerContainer = false
 	return metrics, nil
 }
 
 func (c *Collector) GetProcessMetricsByPID(pid int) (domain.Metrics, error) {
 	var metrics domain.Metrics
 	metrics.PID = pid
+	metrics.Cgroup = cgroup
 
 	pidStat, err := pidCollector.GetStat(pid, c.DurationBetweenCPUSamples)
 	if err != nil {
