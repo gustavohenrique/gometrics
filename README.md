@@ -1,6 +1,9 @@
 gometrics
 ===
 
+[![Screenshot](https://i.imgur.com/QHcXPIQ.png)](https://gustavohenrique.github.io/gometrics)
+
+
 [![Coverage Status](https://coveralls.io/repos/github/gustavohenrique/gometrics/badge.svg?branch=main)](https://coveralls.io/github/gustavohenrique/gometrics?branch=main)
 
 > Gometrics is a pure Go lib with no third-party dependencies to read data from the Linux Kernel via *procfs* and Go runtime.
