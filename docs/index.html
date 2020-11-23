@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Gometrics Dashboard</title>
+
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="version" content="">
+<meta name="viewport"
+  content="user-scalable=no, initial-scale=1, maximum-scale=3, minimum-scale=1, width=device-width, viewport-fit=cover">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+<style type="text/css">
+:root {
+  --loading: hsl(0, 0%, 86%);
+}
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: 10px solid var(--loading);
+  border-color: var(--loading) transparent var(--loading) transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+.height-lg {
+  height: 345px;
+}
+</style>
+</head>
+
+<body>
+  <div id="app" class="is-invisible">
+     <nav class="navbar is-dark" role="navigation" aria-label="main navigation" style="z-index:0">
+      <div class="navbar-brand">
+        <a href="#" class="navbar-item">
+          <span>Gometrics Dashboard</span>
+        </a>
+      </div>
+    </nav>
+
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title">URL</p>
+              </header>
+              <div class="card-content">
+                <form action="#">
+                  <div class="field">
+                    <div class="field-body">
+                      <div class="field has-addons">
+                        <div class="control is-expanded">
+                          <input type="text" v-model="url" class="input" name="url" placeholder="Paste the metrics URL here">
+                        </div>
+                        <div class="control">
+                          <button type="button" class="button is-info" :disabled="started" v-on:click="start">
+                            Get metrics
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-one-fifth">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title">Refresh interval</p>
+              </header>
+              <div class="card-content" style="height:88px">
+                <div>
+                  <input type="range" name="interval" min="0" max="10" v-model="interval" />
+                </div>
+                <div>{{ interval > 0 ? interval + ' seconds' : 'Stopped. Need reload.'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container">
+        <div class="columns">
+
+          <div class="column is-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title">CPU</p>
+                <a href="#" class="card-header-icon">
+                  <c-loading v-show="loading"></c-loading>
+                </a>
+              </header>
+              <div class="card-content has-text-centered height-lg">
+                <c-canvas-cpu class="mt-6"></c-canvas-cpu>
+              </div>
+            </div>
+          </div>
+
+          <div class="column is-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title">Memory</p>
+                <a href="#" class="card-header-icon">
+                  <c-loading v-show="loading"></c-loading>
+                </a>
+              </header>
+              <div class="card-content has-text-centered height-lg">
+                <c-canvas-memory class="mt-6"></c-canvas-memory>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title">Latest 5 min</p>
+                <a href="#" class="card-header-icon">
+                  <c-loading v-show="loading"></c-loading>
+                </a>
+              </header>
+              <div class="card-content has-text-centered height-lg">
+                <c-canvas-history></c-canvas-history>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">Go runtime</p>
+            <a href="#" class="card-header-icon">
+              <c-loading v-show="loading"></c-loading>
+            </a>
+          </header>
+          <div class="card-content">
+            <div class="columns">
+              <div class="column has-text-left">
+                <h2>Goroutines</h2>
+                <h3 class="is-size-1">{{ metrics.runtime.num_goroutine }}</h3>
+              </div>
+              <div class="column has-text-centered">
+                <h2>Garbage Collector run</h2>
+                <h3 class="is-size-1">{{ metrics.runtime.num_gc }}</h3>
+              </div>
+              <div class="column has-text-right">
+                <h2>Live objects</h2>
+                <h3 class="is-size-1">{{ metrics.runtime.live_objects }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.0.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+  <script src="main.js"></script>
+</body>
+</html>
+

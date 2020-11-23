@@ -1,0 +1,11 @@
+{
+  "name": "dashboard",
+  "version": "0.0.1",
+  "description": "Dashboard for Gometrics",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx http-server ./ --no-dotfiles -c -1"
+  },
+  "author": "Gustavo Henrique",
+  "license": "Apache-2.0"
+}

@@ -1,4 +1,4 @@
-gometrics
+Gometrics
 ===
 
 [![Screenshot](https://i.imgur.com/QHcXPIQ.png)](https://gustavohenrique.github.io/gometrics)
@@ -12,13 +12,18 @@ gometrics
 
 Metrics are a standard for measurement. They play an important role in understanding why your application is working in a certain way. You will need some information to find out what is happening with your application to keep it stable or help you when something goes wrong.
 
-## Features
+## About
+
+Gometrics does not persist data or give you a dashboard. You're free to use any technology to show and persist metrics.  
+There is a dashboard example written in Javascript inside the `/docs` directory.
+
+Features:
 
 - Calculates CPU and memory usage from the current process
-- Exposes Go runtime metrics like total times GC run
+- Exposes Go runtime metrics like total times GC run and total of goroutines
 - Gets memory usage and limit when it's run inside a Docker container
 - Uses only the Go standard lib
-- Works only on Linux x86
+- Works on Linux x86_64 and Docker containers
 
 Supported metrics' types:
 
@@ -51,9 +56,17 @@ func main() {
 ## How it works?
 
 What the `Process()` does is reads the proc file system. The proc file system (procfs or `/proc`) exposes internal kernel data structures, which is used to obtain information about the system.  
-The `Docker()` reads the profcs inside a Docker container. Because the way to get metrics from a process running inside and outside a container could be a little different.
+The `Docker()` reads the profcs inside a Docker container. Because the way to get metrics from a process running inside and outside a container could be a little different. Both functions can be called by `Metrics()` which auto-detects if Gometrics are running inside a container or not.
 
 Also, both functions exposes metrics from Go runtime.
+
+The calculation of CPU utilization is based on the total available utilization of all cores. Gometrics picking sample the total process time, every second by default, and find the difference.
+
+Memory usage is got from procfs. When Gometrics is running outside of a container, it gives [Proportional set size](https://en.wikipedia.org/wiki/Proportional_set_size).
+
+**Amazon ECS**
+
+Gometrics read data from `/proc/self/cgroup` and it can be different in AWS ECS. You can disable the ECS hierarchy by setting `ECS_ENABLE_TASK_CPU_MEM_LIMIT=false` to revert the `/proc/self/cgroup` output to use the "normal" Docker output.
 
 ## License
 
