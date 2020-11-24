@@ -71,7 +71,7 @@ Also, you can set the ECS CPU units before call `Metrics()`:
 
 ```go
 collector := gometrics.New()
-collector.ECSCpuUnits = 2048  // 2 vCPUs
+collector.EcsCpuTaskUnit = 2048  // 2 vCPUs
 metrics, _ := collector.Metrics()
 ```
 

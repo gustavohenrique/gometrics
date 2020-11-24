@@ -18,7 +18,7 @@ var (
 
 type Collector struct {
 	DurationBetweenCPUSamples int
-	ECSCpuUnits               int
+	EcsCpuTaskUnit            int
 }
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 func New() *Collector {
 	return &Collector{
 		DurationBetweenCPUSamples: 1,
-		ECSCpuUnits:               2048,
+		EcsCpuTaskUnit:            2048,
 	}
 }
 
@@ -41,7 +41,7 @@ func (c *Collector) Metrics() (domain.Metrics, error) {
 		return metrics, err
 	}
 	if cgroup == domain.ECS {
-		metrics.CpuUsagePercentage = (metrics.CpuUsagePercentage * 100) / float64(c.ECSCpuUnits)
+		metrics.CpuUsagePercentage = 100 - ((metrics.CpuUsagePercentage * 100) / float64(c.EcsCpuTaskUnit))
 	}
 	return metrics, nil
 }
