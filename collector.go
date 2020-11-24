@@ -41,7 +41,7 @@ func (c *Collector) Metrics() (domain.Metrics, error) {
 		return metrics, err
 	}
 	if cgroup == domain.ECS {
-		metrics.CpuUsagePercentage = 100 - ((metrics.CpuUsagePercentage * 100) / float64(c.EcsCpuTaskUnit))
+		metrics.CpuUsagePercentage = (metrics.CpuUsagePercentage * 100) / float64(c.EcsCpuTaskUnit)
 	}
 	return metrics, nil
 }
