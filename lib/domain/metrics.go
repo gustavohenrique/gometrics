@@ -1,6 +1,7 @@
 package domain
 
 const LINUX = "init.scope"
+const ECS = "ecs"
 
 type Base struct {
 	MemoryUsage        uint64       `json:"memory_usage_in_mib"`

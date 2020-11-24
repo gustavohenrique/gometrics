@@ -66,7 +66,14 @@ Memory usage is got from procfs. When Gometrics is running outside of a containe
 
 **Amazon ECS**
 
-Gometrics read data from `/proc/self/cgroup` and it can be different in AWS ECS. You can disable the ECS hierarchy by setting `ECS_ENABLE_TASK_CPU_MEM_LIMIT=false` to revert the `/proc/self/cgroup` output to use the "normal" Docker output.
+Gometrics read data from `/proc/self/cgroup` and it can be different in AWS ECS. You can disable the ECS hierarchy by setting `ECS_ENABLE_TASK_CPU_MEM_LIMIT=false` to revert the `/proc/self/cgroup` output to use the "normal" Docker output.  
+Also, you can set the ECS CPU units before call `Metrics()`:
+
+```go
+collector := gometrics.New()
+collector.ECSCpuUnits = 2048  // 2 vCPUs
+metrics, _ := collector.Metrics()
+```
 
 ## License
 
