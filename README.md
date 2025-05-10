@@ -1,14 +1,34 @@
-Gometrics
-===
+# Gometrics (Deprecated)
 
 [![Screenshot](https://i.imgur.com/QHcXPIQ.png)](https://gustavohenrique.github.io/gometrics)
 
 
 [![Coverage Status](https://coveralls.io/repos/github/gustavohenrique/gometrics/badge.svg?branch=main)](https://coveralls.io/github/gustavohenrique/gometrics?branch=main)
 
-> Gometrics is a pure Go lib with no third-party dependencies to read data from the Linux Kernel via *procfs* and Go runtime.
+> Important Notice: This project is no longer maintained and has been officially discontinued. A more up-to-date and robust version of this library is now available under the name syspector. Please consider migrating to the new library for continued support and enhanced features.
 
-## Why?
+## Why was it discontinued?
+
+Gometrics served as a great starting point for reading system metrics in Go, but it has been superseded by a more comprehensive 
+and actively maintained library, [syspector](https://github.com/ravoni4devs/syspector). Syspector offers enhanced features, improved compatibility, and support for multiple
+operating systems (Linux, macOS, Windows), as well as Docker environments.
+
+## Features (in Syspector)
+
+- More accurate and updated system resource monitoring (CPU, memory, disk usage)
+- Cross-platform support for Linux, Windows, and macOS (Darwin)
+- Docker container stats for memory and CPU usage
+- Better support for the Go runtime and application-level metrics
+- Actively maintained with regular updates
+- We highly encourage all users of Gometrics to transition to syspector for continued development and new features.
+
+## Install (for Syspector)
+
+```sh
+go get github.com/ravoni4devs/syspector
+```
+
+## Why Gometrics?
 
 Metrics are a standard for measurement. They play an important role in understanding why your application is working in a certain way. You will need some information to find out what is happening with your application to keep it stable or help you when something goes wrong.
 
